@@ -22,7 +22,7 @@ cloud; the model runs on your RTX videocard.
 (A virtual cable is only needed for the opposite direction — capturing what
 a *microphone* says. See "Captioning a microphone instead" below.)
 
-## 1. Install (Windows, RTX 4070)
+## 1. Install (Windows)
 
 Requires an NVIDIA GPU with a working CUDA driver (already present if you
 game/use CUDA apps) and Python 3.10+.
