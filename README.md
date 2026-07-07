@@ -4,7 +4,7 @@ Real-time, fully local speech-to-text subtitles for videos, games, or Discord
 calls — built so a deaf person can follow along by reading captions in the
 language actually being spoken (Russian audio -> Russian captions, English
 audio -> English captions, auto-detected per segment). Nothing is sent to the
-cloud; the model runs on your RTX 4070.
+cloud; the model runs on your RTX videocard. 
 
 ## How it works
 
