@@ -24,10 +24,16 @@ cloud; the model runs locally on any NVIDIA GPU with CUDA cores.
    как это делают программы записи экрана со звуком. Виртуальный кабель не
    нужен, звук никуда не перенаправляется: человек продолжает слышать
    Discord/видео совершенно нормально через свои обычные наушники.
-2. Каждый фрагмент речи отправляется в локальную модель
+2. Вместо всего звука можно выбрать **одно конкретное приложение** (например,
+   только Discord) — тогда музыка, игры и уведомления других программ не
+   будут попадать в субтитры. Выбор доступен прямо в окне при запуске
+   (список приложений, которые сейчас издают звук) или через параметр
+   `--app Discord`. Требуется Python 3.10–3.13 (используется WASAPI process
+   loopback).
+3. Каждый фрагмент речи отправляется в локальную модель
    [faster-whisper](https://github.com/SYSTRAN/faster-whisper), которая
    работает на видеокарте (CUDA).
-3. Распознанный текст показывается в небольшой полупрозрачной панели поверх
+4. Распознанный текст показывается в небольшой полупрозрачной панели поверх
    всех окон, которую можно перетаскивать в удобное место.
 
 **Запуск через bat-файлы (проще всего, без командной строки):**
@@ -111,7 +117,22 @@ python subtitles.py --device "Headset Earphone (Your Headset Name)" --loopback
 (replace with the exact name from step 2 — quote it, names often contain
 spaces)
 
-As soon as it launches, a small window pops up asking you to choose a model:
+As soon as it launches, a small window pops up asking you to choose the
+**audio source** and the **model**:
+
+Audio source:
+
+- **Весь звук компьютера (whole system)** — captions everything playing
+  through the chosen device.
+- **Только \<приложение\> (single app)** — captions one app only (e.g.
+  Discord), so music/game sounds from other apps don't pollute the captions.
+  The list shows apps that currently have an audio session (▶ = playing right
+  now); use the "Обновить" button after starting an app. Requires Python
+  3.10–3.13 (WASAPI process loopback via
+  [proc-tap](https://github.com/m96-chan/ProcTap)); on other Python versions
+  the app list is hidden and whole-system capture is used.
+
+Model:
 
 - **Fast (`small`)** — quicker captions, slightly less accurate. Best for
   live conversation (Discord calls).
@@ -120,7 +141,8 @@ As soon as it launches, a small window pops up asking you to choose a model:
 
 Whichever one is picked gets downloaded on first use (`small` ~500MB,
 `large-v3` ~3GB) and cached — after that it works fully offline. To skip this
-window and always use a fixed model, pass `--no-model-picker --model <name>`.
+window entirely, pass `--no-model-picker --model <name>` (plus optionally
+`--app <name>`).
 
 A subtitle bar appears near the bottom of the screen. Drag it with the mouse
 to reposition; press `Esc` to close it.
@@ -130,6 +152,8 @@ to reposition; press `Esc` to close it.
 | Flag | Meaning |
 |---|---|
 | `--loopback` | Capture what plays out of the named device (speakers/headphones) instead of recording it as a microphone. This is what you want for captioning Discord/video audio without affecting playback. |
+| `--app` | Capture one application's audio only (WASAPI process loopback), e.g. `--app Discord`. Case-insensitive substring of the process name; the app must be running with an audio session. Overrides `--device`/`--loopback`. Requires Python 3.10–3.13. |
+| `--language` | Lock the caption language (e.g. `ru` or `en`) to skip per-segment language detection — noticeably faster, but mixed-language speech gets forced into that one language. Default `auto`. |
 | `--model` | `tiny`, `base`, `small` (default), `medium`, `large-v3`. Bigger = more accurate but slower. `small` gives the best speed/accuracy balance for live captions on most GPUs; go up to `medium`/`large-v3` only if accuracy matters more than latency to you (also selectable at launch via the model-picker window). |
 | `--compute-type` | `float16` (default, works well on any CUDA GPU), or `int8_float16` for less VRAM/more speed at a small accuracy cost. |
 | `--beam-size` | `1` (default) = greedy decoding, fastest. Raise to e.g. `5` for slightly better accuracy at the cost of speed. |
@@ -141,6 +165,8 @@ to reposition; press `Esc` to close it.
 
 ### If it still feels slow
 
+- Lock the language with `--language ru` (or `en`) if the audio is mostly one
+  language — skipping per-segment language detection is a noticeable speedup.
 - Try `--model tiny` or `--model base` for the fastest possible turnaround
   (less accurate, especially on quieter/accented speech).
 - The console prints how long each transcription took, e.g.
@@ -148,6 +174,9 @@ to reposition; press `Esc` to close it.
   model itself is the bottleneck and a smaller `--model` will help most.
   If it's low but captions still feel delayed, try lowering
   `--max-segment-s` and `--min-silence-ms` instead.
+- The model is warmed up once at startup, and if transcription ever falls
+  behind live audio, the oldest pending segments are skipped automatically so
+  captions never lag further and further behind.
 - Weaker GPUs will need a smaller model/compute-type than a high-end one for
   the same latency — there's no one-size-fits-all setting.
 

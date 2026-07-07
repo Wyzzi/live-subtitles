@@ -2,6 +2,13 @@ faster-whisper>=1.0.3
 soundcard>=0.4.3
 numpy>=1.26.4
 
+# Per-application capture (e.g. caption Discord only). The native part of
+# proc-tap ships prebuilt for Python 3.10-3.13; on other versions the app
+# falls back to whole-system capture automatically.
+proc-tap>=1.0.3
+pycaw>=20240210
+psutil>=5.9
+
 # CUDA/cuDNN runtime DLLs that ctranslate2 (used by faster-whisper) needs to
 # run on the GPU. Installed as regular pip packages so no manual CUDA
 # toolkit install or PATH editing is required.
