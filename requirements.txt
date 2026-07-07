@@ -1,0 +1,9 @@
+faster-whisper>=1.0.3
+soundcard>=0.4.3
+numpy>=1.26.4
+
+# CUDA/cuDNN runtime DLLs that ctranslate2 (used by faster-whisper) needs to
+# run on the GPU. Installed as regular pip packages so no manual CUDA
+# toolkit install or PATH editing is required.
+nvidia-cublas-cu12
+nvidia-cudnn-cu12
