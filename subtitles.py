@@ -320,13 +320,13 @@ def main():
     parser.add_argument("--model", default="small",
                          help="faster-whisper model size: tiny/base/small/medium/large-v3 "
                               "(default: small -- fast and accurate enough for live captions on "
-                              "an RTX 4070; use medium/large-v3 if you want more accuracy and can "
+                              "most CUDA GPUs; use medium/large-v3 if you want more accuracy and can "
                               "tolerate more lag). Ignored if --no-model-picker is not set, since "
                               "the picker window lets you choose this interactively instead.")
     parser.add_argument("--no-model-picker", action="store_true",
                          help="Skip the startup model-choice window and use --model directly.")
     parser.add_argument("--compute-type", default="float16",
-                         help="float16 (recommended on RTX 4070), int8_float16, or int8.")
+                         help="float16 (recommended on most CUDA GPUs), int8_float16, or int8.")
     parser.add_argument("--beam-size", type=int, default=1,
                          help="Whisper beam search width. 1 (default) = greedy decoding, "
                               "fastest. Higher (e.g. 5) is a bit more accurate but slower.")
